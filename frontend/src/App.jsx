@@ -1,7 +1,9 @@
 import { useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 function App() {
-  const [page, setPage] = useState("login"); // "login" | "register" | "chat"
+  const [page, setPage] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,12 +14,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [conversationId, setConversationId] = useState(null);
 
-  // ── AUTH ──────────────────────────────────────────
-
   const handleRegister = async () => {
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/api/register", {
+      const res = await fetch(`${API_URL}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -34,7 +34,7 @@ function App() {
   const handleLogin = async () => {
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/api/login", {
+      const res = await fetch(`${API_URL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -57,8 +57,6 @@ function App() {
     setPage("login");
   };
 
-  // ── CHAT ──────────────────────────────────────────
-
   const sendMessage = async () => {
     if (!input.trim()) return;
 
@@ -69,11 +67,11 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/chat", {
+      const res = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, // send JWT with every request
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({ messages: updatedMessages, conversationId }),
       });
@@ -96,8 +94,6 @@ function App() {
     setMessages([]);
     setConversationId(null);
   };
-
-  // ── PAGES ──────────────────────────────────────────
 
   if (page === "register") {
     return (
@@ -176,7 +172,6 @@ function App() {
 }
 
 const styles = {
-  // auth
   authContainer: { display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#f5f5f5" },
   authBox: { background: "#fff", padding: "40px", borderRadius: "12px", boxShadow: "0 2px 12px rgba(0,0,0,0.1)", width: "360px", display: "flex", flexDirection: "column", gap: "12px" },
   authTitle: { margin: "0 0 8px", textAlign: "center" },
@@ -185,7 +180,6 @@ const styles = {
   switchText: { textAlign: "center", fontSize: "13px", color: "#666" },
   link: { color: "#4CAF50", cursor: "pointer", fontWeight: "bold" },
   error: { color: "red", fontSize: "13px", textAlign: "center", margin: 0 },
-  // chat
   container: { maxWidth: "600px", margin: "40px auto", fontFamily: "sans-serif", padding: "0 16px" },
   header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" },
   userLabel: { fontSize: "13px", color: "#666" },
